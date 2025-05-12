@@ -1,0 +1,15 @@
+<%- include("templates/header") %> 
+
+<% if (!authenticated) { %>
+    <a class="btn btn-primary" href="/createUser" role="button">Sign Up</a>
+    <br>
+    <a class="btn btn-primary" href="/login" role="button">Log in</a>
+<% } else { %>
+    <p>Hi <%= username %></p>
+    <br>
+    <a class="btn btn-primary" href="/loggedin" role="button">Members Home</a>
+    <br>
+    <a class="btn btn-primary" href="/logout" role="button">Log Out</a>
+<% } %>
+
+<%- include("templates/footer") %> 
