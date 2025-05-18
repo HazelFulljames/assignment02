@@ -74,7 +74,7 @@ async function addPearl() {
         })
     });
     const ref = await response.json();
-    console.log('finished', ref)
+    // console.log('finished', ref)
     location.reload();
 
     

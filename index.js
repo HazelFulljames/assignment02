@@ -257,9 +257,12 @@ app.post('/loggingin', async (req,res) => {
 });
 
 function sameDay(date1, date2) {
-	return date1.getFullYear() === date2.getFullYear() &&
-	date1.getMonth() === date2.getMonth() &&
-	date1.getDate() === date2.getDate();
+	// console.log(date1.getUTCFullYear(), date2.getUTCFullYear())
+	// console.log(date1.getUTCMonth(), date2.getUTCMonth())
+	// console.log(date1.getUTCDate(), date2.getUTCDate())
+	return date1.getUTCFullYear() === date2.getUTCFullYear() &&
+	date1.getUTCMonth() === date2.getUTCMonth() &&
+	date1.getUTCDate() === date2.getUTCDate();
 }
 
 app.get('/loggedin/:x/:z', async (req,res) => {
@@ -278,11 +281,13 @@ app.get('/loggedin/:x/:z', async (req,res) => {
 	var pearls = [];
 	
 	result.forEach(pearl => {
-		if (sameDay(pearl.date, new Date()))
-		pearls.push([pearl.type, pearl.x, pearl.z]);
+		// console.log(pearl.date, new Date(), sameDay(pearl.date, new Date()))
+		if (sameDay(pearl.date, new Date())) {
+			pearls.push([pearl.type, pearl.x, pearl.z]);
+		}
 	});
 
-	// console.log(pearls);
+	//console.log(pearls, result);
     res.render("loggedin", {
 		username: req.session.username,
 		pearlsList: pearls

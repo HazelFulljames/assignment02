@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/addPearl', async (req, res) => {
   const { x, z, type, townx, townz } = req.body;
-  console.log(req.body)
+  // console.log(req.body)
   if (x == null || x == NaN) {
     console.log("data invalid", req.body);
     return res.status(500).json({error: "a"});
