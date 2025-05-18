@@ -1,15 +1,25 @@
 <%- include("templates/header") %> 
 
 <% if (!authenticated) { %>
-    <a class="btn btn-primary" href="/createUser" role="button">Sign Up</a>
     <br>
+    <a class="btn btn-primary" href="/createUser" role="button">Sign Up</a>
     <a class="btn btn-primary" href="/login" role="button">Log in</a>
 <% } else { %>
-    <p>Hi <%= username %></p>
     <br>
-    <a class="btn btn-primary" href="/loggedin" role="button">Members Home</a>
-    <br>
+    <p>Hi <%= username %>!</p>
+    <a class="btn btn-primary" href="/loggedin/-1/0" role="button">Map</a>
     <a class="btn btn-primary" href="/logout" role="button">Log Out</a>
 <% } %>
+<br> <br>
+<h1> BWW Pearls Changelog </h1>
+<pre> 
+1.01 Fixes:
+Blue pearls are now blue (Thanks Quacks!)
+Members only button renamed and now works
+Map rotated 90 degrees (Thanks Michael and Cas!)
+Pearls now store user who added them (leaderboards soon? /silly)
+Site look fix (Thanks Silsune!)
+No longer able to add nonexistent pearls at 0/0 (NaN pearls)
+</pre>
 
 <%- include("templates/footer") %> 

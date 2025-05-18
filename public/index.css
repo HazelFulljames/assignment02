@@ -1,0 +1,30 @@
+:root {
+  --black: #282b28;
+  --darkgrey: #353c3d;
+  --grey: #585453;
+  --lightgrey: #a2a7a5;
+  --pink: #aa6373;
+  --lightpink: #d26780;
+}
+
+*, html, body {
+    background-color: var(--black);
+    color: var(--lightgrey);
+}
+
+.navbar, .nav-link, .navbar-brand, .container-fluid, .navbar-nav, .navbar-collapse {
+    background-color: var(--darkgrey) !important;
+    color: var(--lightgrey) !important;
+}
+
+.btn-primary, .btn-primary:active, .btn-primary:visited {
+    background-color: var(--lightpink) !important;
+    border-color: var(--lightpink) !important;
+    color: var(--darkgrey) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--pink) !important;
+    border-color: var(--pink) !important;
+    color: var(--darkgrey) !important;
+}

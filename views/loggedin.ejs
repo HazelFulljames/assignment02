@@ -1,22 +1,8 @@
 <%- include("templates/header") %> 
-
+    <br>
     <p>You are logged in! Hi <%= username %>! </p>
-    <br>
     <a class="btn btn-primary" href="/logout" role="button">Log Out</a>
-    <br>
-    <style>
-      * {
-          margin: 0px;
-      }
-    </style>
-
-    <script>
-      function getcoords(e) {
-      x = e.clientX;
-      y = e.clientY;
-      document.getElementById("coords").innerHTML="&nbsp;&nbsp;Coordinates: (" + (x - 160) + ", " + (y - 160) + ")";
-      }
-  </script>
+    <br> <br>
     
     <svg id="svg" height="320" width="320">
         <!-- Set townimg using ejs -->
@@ -44,7 +30,7 @@
       <option value="white">White</option>
       <option value="red">Red</option>
       <option value="green">Green</option>
-      <option value="green">Blue</option>
+      <option value="blue">Blue</option>
       <option value="cyan">Cyan</option>
       <option value="magenta">Magenta</option>
       <option value="yellow">Yellow</option>
