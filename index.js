@@ -1,21 +1,24 @@
-
-require("./utils.js");
-
-require('dotenv').config();
-const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const bcrypt = require('bcrypt');
+import "./utils.js";
+import "dotenv/config";
+import { fileURLToPath } from 'url';
+import path from 'path';
+import express from "express";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import bcrypt from "bcrypt";
 const saltRounds = 12;
+
+import route from "./public/route.js";
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+import Joi from "joi";
 
-const Joi = require("joi");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-
-const expireTime = 60 * 60 * 1000; //expires after 1 hour  (minutes * seconds * millis)
+const expireTime = 24 * 60 * 60 * 1000; //expires after 1 day (hours * minutes * seconds * millis)
 
 /* secret information section */
 const mongodb_host = process.env.MONGODB_HOST;
@@ -30,10 +33,12 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const pearlCollection = database.db(mongodb_database).collection('pearls');
 
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -49,6 +54,8 @@ app.use(session({
 	resave: true
 }
 ));
+
+app.use("/route", route);
 
 function isValidSession(req) {
     if (req.session.authenticated) {
@@ -92,15 +99,15 @@ app.get('/', (req,res) => {
 	});
 });
 
-app.get('/promote/:email', adminAuthorization, async (req,res) => {
-	let email = req.params.email
+app.get('/promote/:username', adminAuthorization, async (req,res) => {
+	let username = req.params.username
 
 	const result = await userCollection.updateOne(
-            { "email": email },
+            { "username": username },
             { "$set": {"user_type": "admin"} }
     );
 
-	console.log(result);
+	// console.log(result);
 	if (result) {
 
 		res.redirect('/admin');
@@ -108,14 +115,14 @@ app.get('/promote/:email', adminAuthorization, async (req,res) => {
 	}
 });
 
-app.get('/demote/:email', adminAuthorization, async (req,res) => {
-	let email = req.params.email
+app.get('/demote/:username', adminAuthorization, async (req,res) => {
+	let username = req.params.username
 	const result = await userCollection.updateOne(
-            { "email": email },
+            { "username": username },
             { "$set": {"user_type": "normal"} }
     );
 
-	console.log(result);
+	// console.log(result);
 	if (result) {
 
 		res.redirect('/admin');
@@ -138,7 +145,7 @@ app.get('/nosql-injection', async (req,res) => {
 		res.send(`<h3>no user provided - try /nosql-injection?user=name</h3> <h3>or /nosql-injection?user[$ne]=name</h3>`);
 		return;
 	}
-	console.log("user: "+username);
+	// console.log("user: "+username);
 
 	const schema = Joi.string().max(20).required();
 	const validationResult = schema.validate(username);
@@ -156,7 +163,7 @@ app.get('/nosql-injection', async (req,res) => {
 
 	const result = await userCollection.find({username: username}).project({username: 1, password: 1, _id: 1}).toArray();
 
-	console.log(result);
+	// console.log(result);
 
     res.send(`<h1>Hello ${username}</h1>`);
 });
@@ -176,28 +183,32 @@ app.get('/login/fail', (req,res) => {
 app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var email = req.body.email;
 	var user_type = "normal";
 
 	const schema = Joi.object(
 		{
 			username: Joi.string().alphanum().max(20).required(),
-            email: Joi.string().required(),
 			password: Joi.string().max(20).required(),
 			user_type: Joi.string().required(),
 		});
 	
-	const validationResult = schema.validate({username, email, password, user_type});
+	const validationResult = schema.validate({username, password, user_type});
 	if (validationResult.error != null) {
 	   console.log(validationResult.error);
 	   res.redirect("/createUser");
 	   return;
-   }
+   	}
+	const result = await userCollection.find({username: username}).toArray();
+	if (result.length != 0) {
+		// console.log("username taken");
+		res.redirect("/createUser");
+		return;
+	}
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 	
-	await userCollection.insertOne({username: username, email: email, password: hashedPassword, user_type: user_type});
-	console.log("Inserted user");
+	await userCollection.insertOne({username: username, password: hashedPassword, user_type: user_type});
+	// console.log("Inserted user");
 
     var html = "successfully created user";
     req.session.authenticated = true;
@@ -205,13 +216,12 @@ app.post('/submitUser', async (req,res) => {
     req.session.cookie.maxAge = expireTime;
 	req.session.user_type = "normal";
 
-    res.redirect('/loggedIn');
+    res.redirect('/loggedIn/-1/0');
 });
 
 app.post('/loggingin', async (req,res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var email = req.body.email;
 
 	const schema = Joi.string().max(20).required();
 	const validationResult = schema.validate(username);
@@ -221,49 +231,61 @@ app.post('/loggingin', async (req,res) => {
 	   return;
 	}
 
-	const result = await userCollection.find({username: username, email: email}).project({username: 1, email: 1, password: 1, user_type: 1, _id: 1}).toArray();
+	const result = await userCollection.find({username: username}).project({username: 1, password: 1, user_type: 1, _id: 1}).toArray();
 
-	console.log(result);
+	// console.log(result);
 	if (result.length != 1) {
-		console.log("user not found");
+		// console.log("user not found");
 		res.redirect("/login/fail");
 		return;
 	}
 	if (await bcrypt.compare(password, result[0].password)) {
-		console.log("correct password");
+		// console.log("correct password");
 		req.session.authenticated = true;
 		req.session.username = username;
 		req.session.cookie.maxAge = expireTime;
 		req.session.user_type = result[0].user_type;
 
-		res.redirect('/loggedin');
+		res.redirect('/loggedin/-1/0');
 		return;
 	}
 	else {
-		console.log("incorrect password");
+		// console.log("incorrect password");
 		res.redirect("/login/fail");
 		return;
 	}
 });
 
-app.get('/loggedin', (req,res) => {
+function sameDay(date1, date2) {
+	return date1.getFullYear() === date2.getFullYear() &&
+	date1.getMonth() === date2.getMonth() &&
+	date1.getDate() === date2.getDate();
+}
+
+app.get('/loggedin/:x/:z', async (req,res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
+		
     }
-	let catSrc = "";
-    let rand = Math.floor(Math.random() * 3);
-    if (rand == 0) {
-        catSrc = "/fluffy.gif";
-    }
-    else if (rand == 1) {
-        catSrc = "/socks.gif";
-    } else if (rand == 2) {
-        catSrc = "/cat-fire.gif";
-    }
+	// Get requested town
+	var x = req.params.x;
+	var z = req.params.z;
+	var townObject = {x: x, z: z};
+	// Find all pearls in town
+	// Return as array [{town: {x, z}, type: 'red', x: 0, z: 0, date: dateTime}]
+	const result = await pearlCollection.find({town: townObject}).toArray();
+	// Filter out the ones that aren't today
+	var pearls = [];
+	
+	result.forEach(pearl => {
+		if (sameDay(pearl.date, new Date()))
+		pearls.push([pearl.type, pearl.x, pearl.z]);
+	});
 
+	// console.log(pearls);
     res.render("loggedin", {
 		username: req.session.username,
-		cat: catSrc
+		pearlsList: pearls
 	});
 });
 
