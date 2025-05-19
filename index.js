@@ -233,7 +233,7 @@ app.post('/loggingin', async (req,res) => {
 
 	const result = await userCollection.find({username: username}).project({username: 1, password: 1, user_type: 1, _id: 1}).toArray();
 
-	// console.log(result);
+	console.log(result);
 	if (result.length != 1) {
 		// console.log("user not found");
 		res.redirect("/login/fail");
@@ -260,6 +260,7 @@ function sameDay(date1, date2) {
 	// console.log(date1.getUTCFullYear(), date2.getUTCFullYear())
 	// console.log(date1.getUTCMonth(), date2.getUTCMonth())
 	// console.log(date1.getUTCDate(), date2.getUTCDate())
+	// console.log(date1, date1.getUTCDate(), date2, date2.getUTCDate(), new Date(date1))
 	return date1.getUTCFullYear() === date2.getUTCFullYear() &&
 	date1.getUTCMonth() === date2.getUTCMonth() &&
 	date1.getUTCDate() === date2.getUTCDate();
@@ -282,11 +283,20 @@ app.get('/loggedin/:x/:z', async (req,res) => {
 	
 	result.forEach(pearl => {
 		// console.log(pearl.date, new Date(), sameDay(pearl.date, new Date()))
-		if (sameDay(pearl.date, new Date())) {
-			pearls.push([pearl.type, pearl.x, pearl.z]);
+		// console.log(pearl.x)
+		var now = new Date;
+		var utc_timestamp = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
+		now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+		if (sameDay(new Date(pearl.date), new Date(utc_timestamp))) {
+			
+			if (pearl.addedBy) {
+				pearls.push([pearl.type, pearl.x, pearl.z, pearl.addedBy]);
+			} else {
+				pearls.push([pearl.type, pearl.x, pearl.z, "unknown"]);
+			}
 		}
 	});
-
+	
 	//console.log(pearls, result);
     res.render("loggedin", {
 		username: req.session.username,

@@ -4,13 +4,17 @@ let pearlsString = document.getElementsByClassName("variable")[0].id;
 // Remake an array out of it
 let pearlsArray = pearlsString.split(",");
 let pearls = [];
-for (let i = 0; i < pearlsArray.length; i+=3) {
-    pearls.push([pearlsArray[i], pearlsArray[i+1], pearlsArray[i+2]]);
+for (let i = 0; i < pearlsArray.length; i += 4) {
+    pearls.push([pearlsArray[i], pearlsArray[i+1], pearlsArray[i+2], pearlsArray[i+3]]);
 }
 
 
 populatePearls();
 function populatePearls() {
+    var path = window.location.pathname.split("/");
+    const inputTownx = parseInt(path[2]);
+    const inputTownz = parseInt(path[3]);
+    document.getElementById("townCoords").innerHTML = "Town: " + inputTownx + ", " + inputTownz;
     pearls.forEach(doc => {
 
         var x = parseInt(doc[1]) + 160;
@@ -19,6 +23,7 @@ function populatePearls() {
         let newpearl = document.createElementNS('http://www.w3.org/2000/svg','circle');
         newpearl.setAttribute("cx", x);
         newpearl.setAttribute("cy", z);
+        newpearl.setAttribute("addedBy", doc[3]);
         let color = doc[0];
         if (color == 'none') { color = 'grey'; }
         newpearl.setAttribute("fill", color);
@@ -29,15 +34,40 @@ function populatePearls() {
     });
 }
 
-
+var selected;
 function circle() {
     let x = this.getAttribute("cx") - 160;
     let z = this.getAttribute("cy") - 160;
-    document.getElementById("coords").innerHTML = "Coordinates: " + x + ", " + z;
+    let addedBy = this.getAttribute("addedBy");
+    document.getElementById("coords").innerHTML = "Coordinates: " + x + ", " + z
+    + "\n\nAdded By: " + addedBy;
 }
+async function select() {
+    let addedBy = this.getAttribute("addedBy");
+    const response = await fetch(`/route/getUsername`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    
+    const ref = await response.json();
+    
+    if (addedBy == ref.username) {
+        // console.log(addedBy, ref.username)
+        selected = this;
+        var x = this.getAttribute("cx") - 160;
+        var z = this.getAttribute("cy") - 160;
+        var deletion = document.querySelector("#deletion");
+        deletion.style.contentVisibility = "visible";
+        deletion.querySelector("#name").innerHTML = "Delete Pearl: " + x + ", " + z + "?"
+    }
+}
+
 let circles = document.getElementsByClassName("circle");
 for (let i = 0; i < circles.length; i++) {
-    circles[i].addEventListener("mousemove", circle)
+    circles[i].addEventListener("mousemove", circle);
+    circles[i].addEventListener("click", select);
 }
 
 
@@ -50,8 +80,9 @@ document.getElementById("searchmap").addEventListener("click", workPlease);
 
 
 async function addPearl() {
-    const inputTownx = document.getElementById("townx").value;
-    const inputTownz = document.getElementById("townz").value;
+    var path = window.location.pathname.split("/");
+    const inputTownx = parseInt(path[2]);
+    const inputTownz = parseInt(path[3]);
 
     const inputx = document.getElementById("x").value;
     const inputz = document.getElementById("z").value;
@@ -69,15 +100,15 @@ async function addPearl() {
             x: inputx,
             z: inputz,
             type: inputtype,
-            townx: inputTownx,
-            townz: inputTownz
+            townx: inputTownx.toString(),
+            townz: inputTownz.toString()
         })
     });
     const ref = await response.json();
-    // console.log('finished', ref)
-    location.reload();
-
-    
+    console.log('finished', ref)
+    if (response.ok) {
+        location.reload();
+    }
 }
 
 document.getElementById("addpearl").addEventListener("click", addPearl);

@@ -4,11 +4,22 @@
     <a class="btn btn-primary" href="/logout" role="button">Log Out</a>
     <br> <br>
     
+    <p id="townCoords"></p>
     <svg id="svg" height="320" width="320">
         <!-- Set townimg using ejs -->
         <image id="townimage" height="320" width="320" href="/-1,0.png" />
     </svg>
     <div id="coords">Coordinates: </div>
+    <br>
+
+    <div id="deletion" style="content-visibility: hidden;">
+        <h3>this currently doesn't work im tired as hell i'll fix it soon idk</h3>
+        <p id="name">Delete Pearl?</p>
+        <button id="delete">Yes</button>
+        <button id="close">Close</button>
+    </div>
+
+    <br>
 
     <p>Town X, Town Z: </p>
     <input type="number" id="townx" name="townx" min="-10" max="10" value="-1">
