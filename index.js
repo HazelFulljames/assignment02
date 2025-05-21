@@ -219,6 +219,10 @@ app.post('/submitUser', async (req,res) => {
     res.redirect('/loggedIn/-1/0');
 });
 
+app.get('/stats', sessionValidation, (req,res) => {
+    res.render("stats");
+});
+
 app.post('/loggingin', async (req,res) => {
     var username = req.body.username;
     var password = req.body.password;

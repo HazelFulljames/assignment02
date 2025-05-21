@@ -29,6 +29,12 @@ router.post('/addPearl', async (req, res) => {
   }
 });
 
+router.get('/getPearls', async (req, res) => {
+  let pearls = await pearlCollection.find().toArray();
+
+  return res.status(200).json({pearls: pearls});
+});
+
 router.get('/getUsername', async (req, res) => {
     // console.log(req.session.username)
     return res.status(200).json({username: req.session.username});

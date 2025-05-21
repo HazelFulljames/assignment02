@@ -28,3 +28,8 @@
     border-color: var(--pink) !important;
     color: var(--darkgrey) !important;
 }
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
