@@ -9,10 +9,29 @@
     <p>Hi <%= username %>!</p>
     <a class="btn btn-primary" href="/loggedin/-1/0" role="button">Map</a>
     <a class="btn btn-primary" href="/logout" role="button">Log Out</a>
+    <br><br>
+    <div class="input-group" id="suggestionDiv">
+        <span class="input-group-text">Suggestion</span>
+        <textarea id="suggestion" class="form-control" aria-label="Suggestion"></textarea>
+        <button id="submit" class="btn btn-primary" role="button">Submit</button>
+    </div>
 <% } %>
 <br> <br>
 <h1> BWW Pearls Changelog </h1>
 <pre> 
+1.04 Fixes:
+Made townx/z inputs reflect the current town map (Thanks Phantomaniax!)
+Added suggestion box on main
+Logging in now redirects you to the main page
+Outlined pearls in black (Thanks Silsune!)
+Made towns show up with proper maps for:
+    1,1,
+    1,0,
+    1,-1,
+    and -1,1 (._HAUNT_. YOU ARE THE GOAT ILY)
+Hovering now says pearl color (Thanks Ptown2)
+Updated input fields look on map page
+
 1.03 Fixes:
 Added stats page (Thanks Silsune!)
 
@@ -37,13 +56,13 @@ No longer able to add nonexistent pearls at 0/0 (NaN pearls)
 <pre>
 TODO:
 URGENT:
-Village verification
+Figure out village verification (PLEASE SUGGEST IDEAS),
+Admin tools
 
 NOT QUITE SO URGENT:
 Make the map size dependent on screen size,
-Make the input fields look nicer,
+Make input fields look nicer on login and signup pages
 Graphs (give the BBB pearlers/verified users access to the database for their town?),
-Unique town maps
 
 WOULD BE NICE TO HAVE:
 Password resetting,
@@ -51,8 +70,8 @@ Pearl deletion,
 Rework pearl database to be by-town and by-date so it's easier to sort through,
 Village "lock down" system so I can ransom it,
 Message board for verified users,
-Show town names (Request by ptown2),
-Make name of color show up on hover (Request by ptown2)
+Show town names (Request by ptown2)
 </pre>
 
+<script type="module" src="/suggestion.js"></script>
 <%- include("templates/footer") %> 

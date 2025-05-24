@@ -7,55 +7,69 @@
     <p id="townCoords"></p>
     <svg id="svg" height="320" width="320">
         <!-- Set townimg using ejs -->
-        <image id="townimage" height="320" width="320" href="/-1,0.png" />
+        <image id="townimage" height="320" width="320" href="<%= url %>" />
     </svg>
-    <div id="coords">Coordinates: </div>
+    <div id="coords">[Color] pearl at [x], [z] added by: [user]</div>
     <br>
 
     <div id="deletion" style="content-visibility: hidden;">
-        <h3>this currently doesn't work im tired as hell i'll fix it soon idk</h3>
+        <h3>this currently doesn't work im tired i'll fix it soon idk</h3>
         <p id="name">Delete Pearl?</p>
         <button id="delete">Yes</button>
         <button id="close">Close</button>
+        <br>
     </div>
 
-    <br>
-
-    <p>Town X, Town Z: </p>
-    <input type="number" id="townx" name="townx" min="-10" max="10" value="-1">
-    <input type="number" id="townz" name="townz" min="-10" max="10" value="0">
-    <br>
-    <button type="button" id="searchmap">Search Map</button>
-
-    <br><br>
+    <p>Search Town</p>
+    <div class="row g-3">
+        <div class="col input-group">
+            <div class="input-group-text">X</div>
+            <input type="number" id="townx" class="form-control" min="-10" max="10" value="-1"/>
+        </div>
+        <div class="col input-group">
+            <div class="input-group-text">Z</div>
+            <input type="number" id="townz" class="form-control" min="-10" max="10" value="-1"/>
+        </div>
+        <div class="col">
+            <button id="searchmap" class="btn btn-primary" role="button">Search Map</button>
+        </div>
+    </div>
+    
     <hr>
-    <br>
 
-    <p>Pearl X, Pearl Z: </p>
-    <input type="number" id="x" name="x" min="-160" max="160">
-    <input type="number" id="z" name="z" min="-160" max="160">
-
-    <p>Pearl Type: </p>
-    <select id="type" name="type">
-      <option value="none">Unspecified</option>
-      <option value="white">White</option>
-      <option value="red">Red</option>
-      <option value="green">Green</option>
-      <option value="blue">Blue</option>
-      <option value="cyan">Cyan</option>
-      <option value="magenta">Magenta</option>
-      <option value="yellow">Yellow</option>
-      <option value="black">Black</option>
-    </select>
-
-    <br>
-
-    <button type="button" id="addpearl">Add Pearl</button>
-
+    <p>Add Pearl</p>
+    <div class="row g-3">
+        <div class="col input-group">
+            <div class="input-group-text">X</div>
+            <input type="number" id="x" class="form-control" min="-160" max="160"/>
+        </div>
+        <div class="col input-group">
+            <div class="input-group-text">Z</div>
+            <input type="number" id="z" class="form-control" min="-160" max="160"/>
+        </div>
+        <div class="col input-group">
+            <div class="input-group-text">Color</div>
+            <select id="type" name="type" class="form-select">
+                <option value="none">Unspecified</option>
+                <option value="white">White</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="magenta">Magenta</option>
+                <option value="yellow">Yellow</option>
+                <option value="black">Black</option>
+            </select>
+        </div>
+        <div class="col">
+            <button id="addpearl" class="btn btn-primary" role="button">Add Pearl</button>
+        </div>
+    </div>
     <br><br><br><br>
 
     <p>Upset? Come bother me on discord! likeem_apples</p>
 
+    <!-- Stores pearl information that gets passed into index.js, this is stupid but it works -->
     <div class="variable" id="<%= pearlsList %>"> </div>
 
     <script type="module" src="/index.js"></script>

@@ -5,6 +5,7 @@ import path from 'path';
 import express from "express";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import fs from "fs";
 import bcrypt from "bcrypt";
 const saltRounds = 12;
 
@@ -216,7 +217,7 @@ app.post('/submitUser', async (req,res) => {
     req.session.cookie.maxAge = expireTime;
 	req.session.user_type = "normal";
 
-    res.redirect('/loggedIn/-1/0');
+    res.redirect('/');
 });
 
 app.get('/stats', sessionValidation, (req,res) => {
@@ -250,7 +251,7 @@ app.post('/loggingin', async (req,res) => {
 		req.session.cookie.maxAge = expireTime;
 		req.session.user_type = result[0].user_type;
 
-		res.redirect('/loggedin/-1/0');
+		res.redirect('/');
 		return;
 	}
 	else {
@@ -302,9 +303,16 @@ app.get('/loggedin/:x/:z', async (req,res) => {
 	});
 	
 	//console.log(pearls, result);
+	let url = "/"+x+","+z+".png";
+
+	if (!fs.existsSync("./public/"+url)) {
+		url = "/notfound.png"
+	}
+
     res.render("loggedin", {
 		username: req.session.username,
-		pearlsList: pearls
+		pearlsList: pearls,
+		url: url
 	});
 });
 

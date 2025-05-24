@@ -4,6 +4,7 @@ import MongoStore from "connect-mongo";
 const mongodb_database = process.env.MONGODB_DATABASE;
 var {database} = include('databaseConnection');
 const pearlCollection = database.db(mongodb_database).collection('pearls');
+const suggestionCollection = database.db(mongodb_database).collection('suggestions');
 
 const router = Router();
 
@@ -38,6 +39,15 @@ router.get('/getPearls', async (req, res) => {
 router.get('/getUsername', async (req, res) => {
     // console.log(req.session.username)
     return res.status(200).json({username: req.session.username});
+});
+
+router.post('/addSuggestion', async (req, res) => {
+  const { message } = req.body;
+  await suggestionCollection.insertOne({
+    message: message,
+    addedBy: req.session.username
+  });
+  return res.status(200).json({message: message});
 });
 
 export default router;
