@@ -1,5 +1,3 @@
-console.log("loaded")
-
 // Get all pearls
 const response = await fetch(`/route/getPearls`, {
     method: 'GET',
@@ -13,7 +11,7 @@ var pearlsArray = [];
 if (response.ok) {
     console.log(ref.pearls, ref.pearls.length)
     for (let i = 0; i < ref.pearls.length; i++) {
-        console.log(ref.pearls[i])
+        // console.log(ref.pearls[i])
         let exists = false;
         for (let j = 0; j < pearlsArray.length; j++) {
             if (pearlsArray[j].username == ref.pearls[i].addedBy) {

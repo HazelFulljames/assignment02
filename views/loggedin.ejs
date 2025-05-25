@@ -5,19 +5,30 @@
     <br> <br>
     
     <p id="townCoords"></p>
-    <svg id="svg" height="320" width="320">
-        <!-- Set townimg using ejs -->
-        <image id="townimage" height="320" width="320" href="<%= url %>" />
-    </svg>
+    <div class="row justify-content-start">
+        <div class="col-4">
+            <svg id="svg" height="320" width="320">
+                <!-- Set townimg using ejs -->
+                <image id="townimage" height="320" width="320" href="<%= url %>" />
+            </svg>
+        </div>
+        <div class="col-4">
+            <div id="heatmapContainerWrapper">
+                <div id="heatmapContainer">
+                <!-- Set townimg using ejs -->
+                <!-- <image id="heatmap" height="320" width="320" href="<%= url %>" /> -->
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="coords">[Color] pearl at [x], [z] added by: [user]</div>
     <br>
 
     <div id="deletion" style="content-visibility: hidden;">
-        <h3>this currently doesn't work im tired i'll fix it soon idk</h3>
         <p id="name">Delete Pearl?</p>
         <button id="delete">Yes</button>
         <button id="close">Close</button>
-        <br>
+        <br> <br>
     </div>
 
     <p>Search Town</p>
@@ -71,7 +82,10 @@
 
     <!-- Stores pearl information that gets passed into index.js, this is stupid but it works -->
     <div class="variable" id="<%= pearlsList %>"> </div>
-
+    
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <script src="/libraries/heatmap.min.js"></script>
+    <script src="/libraries/leaflet-heatmap.js"></script>
     <script type="module" src="/index.js"></script>
 
 <%- include("templates/footer") %> 

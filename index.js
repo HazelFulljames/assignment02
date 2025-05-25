@@ -295,9 +295,9 @@ app.get('/loggedin/:x/:z', async (req,res) => {
 		if (sameDay(new Date(pearl.date), new Date(utc_timestamp))) {
 			
 			if (pearl.addedBy) {
-				pearls.push([pearl.type, pearl.x, pearl.z, pearl.addedBy]);
+				pearls.push([pearl.type, pearl.x, pearl.z, pearl.addedBy, pearl._id]);
 			} else {
-				pearls.push([pearl.type, pearl.x, pearl.z, "unknown"]);
+				pearls.push([pearl.type, pearl.x, pearl.z, "unknown", pearl._id]);
 			}
 		}
 	});

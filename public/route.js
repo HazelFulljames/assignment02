@@ -1,6 +1,7 @@
 import { Router, urlencoded } from "express";
 import "dotenv/config";
 import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
 const mongodb_database = process.env.MONGODB_DATABASE;
 var {database} = include('databaseConnection');
 const pearlCollection = database.db(mongodb_database).collection('pearls');
@@ -36,9 +37,24 @@ router.get('/getPearls', async (req, res) => {
   return res.status(200).json({pearls: pearls});
 });
 
+router.post('/removePearl', async (req, res) => {
+  const { id } = req.body;
+  await pearlCollection.deleteOne({
+      _id: new mongoose.Types.ObjectId(id)
+  });
+  return res.status(200).json({success: "a"});
+});
+
 router.get('/getUsername', async (req, res) => {
     // console.log(req.session.username)
     return res.status(200).json({username: req.session.username});
+});
+
+router.get('/getSuggestions', async (req, res) => {
+    // console.log(req.session.username)
+    let suggestions = await suggestionCollection.find().toArray();
+    console.log(suggestions);
+    return res.status(200).json({suggestions: suggestions});
 });
 
 router.post('/addSuggestion', async (req, res) => {
