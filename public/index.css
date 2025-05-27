@@ -41,11 +41,13 @@ table, th, td {
   position: absolute;
 }
 
-@media only screen and (max-width: 991px) {
-  #heatmapContainerWrapper { content-visibility: hidden; width: 0px; }
+
+ /* This is bad and if you do it this way I will judge you but it's being weird so idc */
+ @media only screen and (max-width: 991px) {
+  #heatmapContainerWrapper { content-visibility: hidden; transform: translateX(-3000px);}
   #heatmapContainer { content-visibility: hidden; }
 }
 
 @media only screen and (max-width: 550px) {
   #pearlCount { content-visibility: hidden; }
-}
+} 
