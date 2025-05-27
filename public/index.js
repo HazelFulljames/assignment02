@@ -28,17 +28,33 @@ if (pearlsString != "") {
 }
 
 // Populate pearls
+var pearlColors = [];
 populatePearls();
 function populatePearls() {
     var path = window.location.pathname.split("/");
     const inputTownx = parseInt(path[2]);
     const inputTownz = parseInt(path[3]);
+    const inputFilter = path[4];
     document.getElementById("townCoords").innerHTML = "Town: " + inputTownx + ", " + inputTownz;
     document.getElementById("townx").value = inputTownx;
     document.getElementById("townz").value = inputTownz;
+    document.getElementById("filter").value = inputFilter;
     let heatArray = [];
     pearls.forEach(doc => {
 
+        // Create pearl array
+        let exists = false;
+        for (let i = 0; i < pearlColors.length; i++) {
+            if (pearlColors[i].color == doc[0]) {
+                exists = true
+                pearlColors[i].count ++;
+            }
+        }
+        if (!exists) {
+            pearlColors.push({color: doc[0], count: 1});
+        }
+
+        // Draw pearls
         var x = parseInt(doc[1]) + 160;
         var z = parseInt(doc[2]) + 160;
 
@@ -66,6 +82,35 @@ function populatePearls() {
         // console.log("added pearl at", x - 160, z - 160)
     });
 }
+
+// Sort pearl array
+let unsorted = true;
+// While unsorted
+while (unsorted) {
+    unsorted = false;
+    // Loop through array
+    for (let i = 0; i < pearlColors.length - 1; i++) {
+        // If pearlsCount < array+1.pearlsCount
+        if (pearlColors[i].count < pearlColors[i+1].count) {
+            unsorted = true;
+            // Swap
+            let temp = pearlColors[i];
+            pearlColors[i] = pearlColors[i+1];
+            pearlColors[i+1] = temp;
+        }
+    }
+}
+
+console.log(pearlColors);
+// Draw pearl table
+let allPearls = pearls.length;
+let html = "<table><tr><th>Color</th><th>Count</th><th>Percent</th></tr>";
+for (let i = 0; i < pearlColors.length; i++) {
+    let percent = Math.round((pearlColors[i].count/allPearls)*10000)/100;
+    html += `<tr><td>${capitalize(pearlColors[i].color)}</td><td>${pearlColors[i].count}</td><td>${percent}%</td></tr>`;
+}
+html += "</table>";
+document.getElementById("pearlCount").innerHTML = html;
 
 // Circle selection
 function capitalize(val) {
@@ -149,7 +194,8 @@ document.getElementById("delete").addEventListener("click", async () => {
 async function workPlease() {
     var inputTownx = document.getElementById("townx").value;
     var inputTownz = document.getElementById("townz").value;
-    location.href = "/loggedin/"+inputTownx+"/"+inputTownz;
+    var inputFilter = document.getElementById("filter").value;
+    location.href = "/loggedin/"+inputTownx+"/"+inputTownz+"/"+inputFilter;
 }
 document.getElementById("searchmap").addEventListener("click", workPlease);
 

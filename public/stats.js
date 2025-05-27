@@ -9,7 +9,7 @@ const ref = await response.json();
 // Loop through it and add value to object [{username, pearlCount}]
 var pearlsArray = [];
 if (response.ok) {
-    console.log(ref.pearls, ref.pearls.length)
+    // console.log(ref.pearls, ref.pearls.length)
     for (let i = 0; i < ref.pearls.length; i++) {
         // console.log(ref.pearls[i])
         let exists = false;
@@ -41,7 +41,7 @@ while (unsorted) {
         }
     }
 }
-console.log(pearlsArray)
+// console.log(pearlsArray)
 // Show as a table
 let html = "<table><tr><th>Place</th><th>User</th><th>Pearls</th></tr>";
 for (let i = 0; i < pearlsArray.length; i++) {

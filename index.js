@@ -15,6 +15,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 import Joi from "joi";
+import { text } from "stream/consumers";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -220,7 +221,65 @@ app.post('/submitUser', async (req,res) => {
     res.redirect('/');
 });
 
-app.get('/stats', sessionValidation, (req,res) => {
+app.get('/stats', sessionValidation, async (req,res) => {
+	
+	let townx = "-1";
+	let townz = "0";
+	const result = await pearlCollection.find({town: {x: townx, z: townz}}).toArray();
+	var content = [];
+	result.forEach(pearl => {
+		content.push({color: pearl.type, x: pearl.x, z: pearl.z, townx: townx, townz: townz});
+	});
+	console.log(content)
+	let countedContent = [];
+	for (let i = 0; i < content.length; i++) {
+		let exists = false;
+		for (let j = 0; j < countedContent.length; j++) {
+			if (
+				countedContent[j].x == content[i].x
+				&& countedContent[j].z == content[i].z
+				&& countedContent[j].townx == content[i].townx
+				&& countedContent[j].townz == content[i].townz
+			) {
+				exists = true;
+				countedContent[j].count++;
+			}
+		}
+		if (!exists) {
+			countedContent.push({x: content[i].x, z: content[i].z, townx: content[i].townx, townz: content[i].townz, count: 1});
+		}
+	}
+
+	let unsorted = true;
+	// While unsorted
+	while (unsorted) {
+		unsorted = false;
+		// Loop through array
+		for (let i = 0; i < countedContent.length - 1; i++) {
+			// If pearlsCount < array+1.pearlsCount
+			if (countedContent[i].count < countedContent[i+1].count) {
+				unsorted = true;
+				// Swap
+				let temp = countedContent[i];
+				countedContent[i] = countedContent[i+1];
+				countedContent[i+1] = temp;
+			}
+		}
+	}
+	console.log(countedContent)
+
+	let textContent = "[";
+	countedContent.forEach(pearl => {
+		textContent += `{x: ${pearl.x}, z: ${pearl.z}, townx: ${pearl.townx}, townz: ${pearl.townz}, count: ${pearl.count}},`
+	});
+	textContent += "]";
+	fs.writeFile('./test.txt', textContent, err => {
+	if (err) {
+		console.error(err);
+	} else {
+		// file written successfully
+	}
+	});
     res.render("stats");
 });
 
@@ -309,6 +368,69 @@ app.get('/loggedin/:x/:z', async (req,res) => {
 		url = "/notfound.png"
 	}
 
+    res.render("loggedin", {
+		username: req.session.username,
+		pearlsList: pearls,
+		url: url
+	});
+});
+
+app.get('/loggedin/:x/:z/:color', async (req,res) => {
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+		
+    }
+	var x = req.params.x;
+	var z = req.params.z;
+	var color = req.params.color;
+	var townObject = {x: x, z: z};
+	const result = await pearlCollection.find({town: townObject}).toArray();
+	var pearls = [];
+	result.forEach(pearl => {
+		var now = new Date;
+		var utc_timestamp = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
+		now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+		if (sameDay(new Date(pearl.date), new Date(utc_timestamp)) && pearl.type == color) {
+			
+			if (pearl.addedBy) {
+				pearls.push([pearl.type, pearl.x, pearl.z, pearl.addedBy, pearl._id]);
+			} else {
+				pearls.push([pearl.type, pearl.x, pearl.z, "unknown", pearl._id]);
+			}
+		}
+	});
+	let url = "/"+x+","+z+".png";
+	if (!fs.existsSync("./public/"+url)) {
+		url = "/notfound.png"
+	}
+    res.render("loggedin", {
+		username: req.session.username,
+		pearlsList: pearls,
+		url: url
+	});
+});
+
+app.get('/loggedin/:x/:z/all', async (req,res) => {
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+    }
+	var x = req.params.x;
+	var z = req.params.z;
+	var townObject = {x: x, z: z};
+	const result = await pearlCollection.find({town: townObject}).toArray();
+	var pearls = [];
+	
+	result.forEach(pearl => {
+		if (pearl.addedBy) {
+			pearls.push([pearl.type, pearl.x, pearl.z, pearl.addedBy, pearl._id]);
+		} else {
+			pearls.push([pearl.type, pearl.x, pearl.z, "unknown", pearl._id]);
+		}
+	});
+	let url = "/"+x+","+z+".png";
+	if (!fs.existsSync("./public/"+url)) {
+		url = "/notfound.png"
+	}
     res.render("loggedin", {
 		username: req.session.username,
 		pearlsList: pearls,

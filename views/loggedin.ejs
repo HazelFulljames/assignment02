@@ -12,13 +12,14 @@
                 <image id="townimage" height="320" width="320" href="<%= url %>" />
             </svg>
         </div>
+        <!-- <div class="w-100"></div> -->
         <div class="col-4">
             <div id="heatmapContainerWrapper">
-                <div id="heatmapContainer">
-                <!-- Set townimg using ejs -->
-                <!-- <image id="heatmap" height="320" width="320" href="<%= url %>" /> -->
-                </div>
+                <div id="heatmapContainer"></div>
             </div>
+        </div>
+        <div class="col-4">
+            <div id="pearlCount"></div>
         </div>
     </div>
     <div id="coords">[Color] pearl at [x], [z] added by: [user]</div>
@@ -41,10 +42,25 @@
             <div class="input-group-text">Z</div>
             <input type="number" id="townz" class="form-control" min="-10" max="10" value="-1"/>
         </div>
+        <div class="col input-group">
+            <div class="input-group-text">Filter</div>
+            <select id="filter" name="filter" class="form-select">
+                <option value="">All</option>
+                <option value="white">White</option>
+                <option value="red">Red</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="magenta">Magenta</option>
+                <option value="yellow">Yellow</option>
+                <option value="black">Black</option>
+            </select>
+        </div>
         <div class="col">
             <button id="searchmap" class="btn btn-primary" role="button">Search Map</button>
         </div>
     </div>
+
     
     <hr>
 
