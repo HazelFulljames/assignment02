@@ -239,7 +239,7 @@ app.post('/submitUser', async (req,res) => {
     res.redirect('/');
 });
 
-app.get('/stats', sessionValidation, verifiedAuthorization, async (req,res) => {
+app.get('/stats', sessionValidation, async (req,res) => {
 	
 	let townx = "-1";
 	let townz = "0";
@@ -348,7 +348,7 @@ function sameDay(date1, date2) {
 	date1.getUTCDate() === date2.getUTCDate();
 }
 
-app.get('/loggedin/:x/:z', verifiedAuthorization, async (req,res) => {
+app.get('/loggedin/:x/:z', async (req,res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
 		
@@ -393,7 +393,7 @@ app.get('/loggedin/:x/:z', verifiedAuthorization, async (req,res) => {
 	});
 });
 
-app.get('/loggedin/:x/:z/:color', verifiedAuthorization, async (req,res) => {
+app.get('/loggedin/:x/:z/:color', async (req,res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
 		
@@ -428,7 +428,7 @@ app.get('/loggedin/:x/:z/:color', verifiedAuthorization, async (req,res) => {
 	});
 });
 
-app.get('/loggedin/:x/:z/all', verifiedAuthorization, async (req,res) => {
+app.get('/loggedin/:x/:z/all', async (req,res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
